@@ -25,7 +25,7 @@ pub enum Ability {
 }
 
 impl Ability {
-    /// Returns an array containing all possible [`AbilityType`] variants.
+    /// Returns an array containing all possible [`Ability`] variants.
     ///
     /// The elements are ordered in the same way as the enum definition.
     ///

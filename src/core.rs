@@ -1,3 +1,6 @@
+mod abilities;
+pub use abilities::Abilities;
+
 mod ability;
 pub use ability::Ability;
 

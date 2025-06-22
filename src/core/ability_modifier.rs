@@ -4,7 +4,7 @@ use crate::core::AbilityScore;
 
 /// Represents a modifier to a D20 test, often originating from an [`AbilityScore`][].
 ///
-/// [`AbilityScore`]: `dnd::core::AbilityScore`
+/// [`AbilityScore`]: [`dnd::core::AbilityScore`]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AbilityModifier(i8);

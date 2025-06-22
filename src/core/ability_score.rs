@@ -4,7 +4,7 @@ use crate::core::AbilityModifier;
 
 /// Represents the magnitude of an [`Ability`][].
 ///
-/// [`Ability`]: `dnd::core::Ability`
+/// [`Ability`]: [`dnd::core::Ability`]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AbilityScore(u8);
@@ -15,6 +15,9 @@ impl AbilityScore {
 
     /// The maximum possible value for an ability score.
     pub const MAX: AbilityScore = AbilityScore(30);
+
+    /// A sensible default value for an ability score, which is 10.
+    pub const DEFAULT: AbilityScore = AbilityScore(10);
 
     /// Creates a new `AbilityScore` with the given value.
     ///
@@ -56,6 +59,12 @@ impl AbilityScore {
     #[allow(clippy::cast_possible_wrap)]
     pub const fn modifier(&self) -> AbilityModifier {
         AbilityModifier::new_clamped((self.value() as i8 - 10) >> 1)
+    }
+}
+
+impl Default for AbilityScore {
+    fn default() -> Self {
+        Self::DEFAULT
     }
 }
 
