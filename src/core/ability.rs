@@ -1,6 +1,8 @@
 extern crate alloc;
 use core::{fmt::Display, str::FromStr};
 
+use crate::core::Skill;
+
 /// Six abilities that measure physical and mental characteristics of creatures.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -94,6 +96,36 @@ impl Ability {
             Ability::Charisma => "CHA",
         }
     }
+
+    /// Skills that are associated with this ability.
+    #[must_use]
+    pub const fn skills(&self) -> &'static [Skill] {
+        match self {
+            Ability::Strength => &[Skill::ATHLETICS],
+            Ability::Dexterity => &[Skill::ACROBATICS, Skill::SLEIGHT_OF_HAND, Skill::STEALTH],
+            Ability::Constitution => &[],
+            Ability::Intelligence => &[
+                Skill::ARCANA,
+                Skill::HISTORY,
+                Skill::INVESTIGATION,
+                Skill::NATURE,
+                Skill::RELIGION,
+            ],
+            Ability::Wisdom => &[
+                Skill::ANIMAL_HANDLING,
+                Skill::INSIGHT,
+                Skill::MEDICINE,
+                Skill::PERCEPTION,
+                Skill::SURVIVAL,
+            ],
+            Ability::Charisma => &[
+                Skill::DECEPTION,
+                Skill::INTIMIDATION,
+                Skill::PERFORMANCE,
+                Skill::PERSUASION,
+            ],
+        }
+    }
 }
 
 impl Display for Ability {
@@ -112,14 +144,14 @@ impl FromStr for Ability {
     type Err = &'static str;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "strength" | "str" => Ok(Ability::Strength),
-            "dexterity" | "dex" => Ok(Ability::Dexterity),
-            "constitution" | "con" => Ok(Ability::Constitution),
-            "intelligence" | "int" => Ok(Ability::Intelligence),
-            "wisdom" | "wis" => Ok(Ability::Wisdom),
-            "charisma" | "cha" => Ok(Ability::Charisma),
-            _ => Err("Invalid ability name"),
+        match s {
+            "Strength" | "STR" => Ok(Ability::Strength),
+            "Dexterity" | "DEX" => Ok(Ability::Dexterity),
+            "Constitution" | "CON" => Ok(Ability::Constitution),
+            "Intelligence" | "INT" => Ok(Ability::Intelligence),
+            "Wisdom" | "WIS" => Ok(Ability::Wisdom),
+            "Charisma" | "CHA" => Ok(Ability::Charisma),
+            _ => Err("Unknown ability"),
         }
     }
 }
@@ -192,18 +224,18 @@ mod tests {
     #[test]
     fn from_str() {
         let cases = [
-            ("strength", Ability::Strength),
-            ("str", Ability::Strength),
-            ("dexterity", Ability::Dexterity),
-            ("dex", Ability::Dexterity),
-            ("constitution", Ability::Constitution),
-            ("con", Ability::Constitution),
-            ("intelligence", Ability::Intelligence),
-            ("int", Ability::Intelligence),
-            ("wisdom", Ability::Wisdom),
-            ("wis", Ability::Wisdom),
-            ("charisma", Ability::Charisma),
-            ("cha", Ability::Charisma),
+            ("Strength", Ability::Strength),
+            ("STR", Ability::Strength),
+            ("Dexterity", Ability::Dexterity),
+            ("DEX", Ability::Dexterity),
+            ("Constitution", Ability::Constitution),
+            ("CON", Ability::Constitution),
+            ("Intelligence", Ability::Intelligence),
+            ("INT", Ability::Intelligence),
+            ("Wisdom", Ability::Wisdom),
+            ("WIS", Ability::Wisdom),
+            ("Charisma", Ability::Charisma),
+            ("CHA", Ability::Charisma),
         ];
 
         for (input, expected) in cases {
@@ -224,5 +256,19 @@ mod tests {
 
         let deserialized: Ability = serde_json::from_str(&serialized).unwrap();
         assert_eq!(deserialized, ability);
+    }
+
+    #[test]
+    fn skills() {
+        // Check against Skill::all()
+        for ability in Ability::all() {
+            for skill in ability.skills() {
+                let expected = Skill::all().iter().find(|s| s.ability() == *ability);
+                assert!(
+                    expected.is_some(),
+                    "Skill {skill:?} should be associated with {ability:?}"
+                );
+            }
+        }
     }
 }

@@ -1,5 +1,3 @@
-use core::fmt::Display;
-
 use crate::core::AbilityScore;
 
 /// Represents a modifier to a D20 test, often originating from an [`AbilityScore`][].
@@ -66,12 +64,6 @@ impl From<AbilityModifier> for i8 {
     }
 }
 
-impl Display for AbilityModifier {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", self.value())
-    }
-}
-
 impl From<AbilityScore> for AbilityModifier {
     fn from(value: AbilityScore) -> Self {
         value.modifier()
@@ -80,11 +72,7 @@ impl From<AbilityScore> for AbilityModifier {
 
 #[cfg(test)]
 mod tests {
-    extern crate alloc;
-
     use super::*;
-    use alloc::string::String;
-    use core::fmt::Write;
 
     #[test]
     fn new_clamped_min() {
@@ -120,14 +108,6 @@ mod tests {
     fn value() {
         let modifier = AbilityModifier::new_clamped(5);
         assert_eq!(modifier.value(), 5);
-    }
-
-    #[test]
-    fn display() {
-        let modifier = AbilityModifier::new_clamped(3);
-        let mut output = String::new();
-        write!(output, "{modifier}").unwrap();
-        assert_eq!(output, "3");
     }
 
     #[test]

@@ -1,5 +1,3 @@
-use core::fmt::Display;
-
 use crate::core::AbilityModifier;
 
 /// Represents the magnitude of an [`Ability`][].
@@ -82,19 +80,9 @@ impl From<AbilityScore> for u8 {
     }
 }
 
-impl Display for AbilityScore {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", self.value())
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    extern crate alloc;
-
     use super::*;
-    use alloc::string::String;
-    use core::fmt::Write;
 
     #[test]
     fn new_clamped_min() {
@@ -193,13 +181,6 @@ mod tests {
         let score = AbilityScore(25);
         let value: u8 = score.into();
         assert_eq!(value, 25);
-    }
-
-    #[test]
-    fn display() {
-        let mut output = String::new();
-        write!(&mut output, "{}", AbilityScore(18)).unwrap();
-        assert_eq!(output, "18");
     }
 
     #[test]
