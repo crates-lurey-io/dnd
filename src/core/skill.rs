@@ -1,4 +1,3 @@
-extern crate alloc;
 use crate::core::Ability;
 use core::{fmt::Display, str::FromStr};
 
@@ -161,9 +160,9 @@ impl FromStr for Skill {
 
 #[cfg(test)]
 mod tests {
-    use core::fmt::Write;
-
+    extern crate alloc;
     use super::*;
+    use core::fmt::Write;
 
     #[test]
     fn names() {

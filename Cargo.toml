@@ -4,8 +4,11 @@ edition = "2024"
 license = "MIT"
 
 description = "D&D 5e types and common mechanics"
-repository = "https://github.com//dnd"
-version = "0.0.0-reserved"
+repository = "http://crates.lurey.io/dnd"
+version = "0.1.0"
+
+keywords = ["dnd", "dungeons-and-dragons"]
+categories = ["games", "no-std"]
 
 [lints.clippy]
 pedantic = "deny"
@@ -20,9 +23,9 @@ just = { version = "1.40.0" }
 taplo-cli = { version = "0.10.0", bins = ["taplo"] }
 
 [features]
+std = ["serde?/std"]
 default = ["std"]
-std = ["serde/std"]
-serde = ["serde/derive"]
+serde = ["dep:serde"]
 
 [dependencies]
 serde = { version = "1.0.219", default-features = false, features = [
