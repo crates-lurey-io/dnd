@@ -8,7 +8,7 @@ use core::{fmt::Display, str::FromStr};
 pub struct Skill {
     name: &'static str,
 
-    #[serde(skip)]
+    #[cfg_attr(feature = "serde", serde(skip))]
     ability: Ability,
 }
 
