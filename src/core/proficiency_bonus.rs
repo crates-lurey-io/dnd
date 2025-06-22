@@ -1,6 +1,17 @@
 use crate::core::Level;
 
 /// Represents a proficiency bonus.
+///
+/// A proficiency bonus is a [`u8`] value in the range of `2..=9`.
+///
+/// # Examples
+///
+/// ```rust
+/// use dnd::core::{ProficiencyBonus, Level};
+///
+/// let bonus = ProficiencyBonus::new(3);
+/// assert_eq!(bonus.value(), 3);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ProficiencyBonus(u8);
@@ -11,6 +22,20 @@ impl ProficiencyBonus {
 
     /// The maximum possible proficiency bonus.
     pub const MAX: Self = Self(9);
+
+    /// Creates a new `ProficiencyBonus` with the given value.
+    ///
+    /// In debug mode, this will panic if the value is outside the valid range of 1 to 30.
+    ///
+    /// In release mode, it will clamp the value to the range of [`Self::MIN`] to [`Self::MAX`].
+    #[must_use]
+    pub const fn new(value: u8) -> Self {
+        debug_assert!(
+            !(value < Self::MIN.value() || value > Self::MAX.value()),
+            "Proficiency bonus must be between 2 and 9"
+        );
+        Self::new_clamped(value)
+    }
 
     /// Creates a new `ProficiencyBonus` with the given value.
     ///
@@ -106,6 +131,18 @@ mod tests {
     fn try_new_valid() {
         let bonus = ProficiencyBonus::try_new(5);
         assert_eq!(bonus, Ok(ProficiencyBonus(5)));
+    }
+
+    #[test]
+    #[should_panic(expected = "Proficiency bonus must be between 2 and 9")]
+    fn new_panic() {
+        let _bonus = ProficiencyBonus::new(1);
+    }
+
+    #[test]
+    fn new() {
+        let bonus = ProficiencyBonus::new(5);
+        assert_eq!(bonus, ProficiencyBonus(5));
     }
 
     #[test]

@@ -3,6 +3,39 @@ use crate::core::AbilityScore;
 /// Represents a modifier to a D20 test, often originating from an [`AbilityScore`][].
 ///
 /// [`AbilityScore`]: [`dnd::core::AbilityScore`]
+///
+/// An modifier score is a [`i8`] value in the range of `-5..==10`.
+///
+/// # Examples
+///
+/// ```rust
+/// use dnd::core::{AbilityModifier, AbilityScore};
+///
+/// let modifier = AbilityModifier::new(3);
+/// assert_eq!(modifier.value(), 3);
+/// ```
+///
+/// # Conversion from [`AbilityScore`][]
+///
+/// An `AbilityModifier` can be created directly from an `AbilityScore` using either:
+///
+/// ```rust
+/// use dnd::core::{AbilityModifier, AbilityScore};
+///
+/// let score = AbilityScore::new(16);
+/// let modifier = AbilityModifier::from(score);
+/// assert_eq!(modifier.value(), 3);
+/// ```
+///
+/// Or, using the `modifier()` method on `AbilityScore`:
+///
+/// ```rust
+/// use dnd::core::{AbilityModifier, AbilityScore};
+///
+/// let score = AbilityScore::new(16);
+/// let modifier = score.modifier();
+/// assert_eq!(modifier.value(), 3);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AbilityModifier(i8);
@@ -13,6 +46,20 @@ impl AbilityModifier {
 
     /// The maximum possible value for an ability modifier.
     pub const MAX: Self = Self(10);
+
+    /// Creates a new `AbilityModifier` with the given value.
+    ///
+    /// In debug mode, this will panic if the value is outside the valid range of 1 to 30.
+    ///
+    /// In release mode, it will clamp the value to the range of [`Self::MIN`] to [`Self::MAX`].
+    #[must_use]
+    pub const fn new(value: i8) -> Self {
+        debug_assert!(
+            !(value < Self::MIN.value() || value > Self::MAX.value()),
+            "Ability modifier must be between -5 and 10"
+        );
+        Self::new_clamped(value)
+    }
 
     /// Creates a new `AbilityModifier` with the given value.
     ///
@@ -102,6 +149,18 @@ mod tests {
     fn try_new_valid() {
         let modifier = AbilityModifier::try_new(3);
         assert_eq!(modifier, Ok(AbilityModifier(3)));
+    }
+
+    #[test]
+    #[should_panic(expected = "Ability modifier must be between -5 and 10")]
+    fn new_panic() {
+        let _modifier = AbilityModifier::new(20);
+    }
+
+    #[test]
+    fn new() {
+        let modifier = AbilityModifier::new(5);
+        assert_eq!(modifier, AbilityModifier(5));
     }
 
     #[test]

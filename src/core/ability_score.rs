@@ -3,6 +3,17 @@ use crate::core::AbilityModifier;
 /// Represents the magnitude of an [`Ability`][].
 ///
 /// [`Ability`]: [`dnd::core::Ability`]
+///
+/// An ability score is a [`u8`] value in the range of `1..=30`.
+///
+/// # Examples
+///
+/// ```rust
+/// use dnd::core::{AbilityScore, AbilityModifier};
+///
+/// let score = AbilityScore::new(15);
+/// assert_eq!(score.value(), 15);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AbilityScore(u8);
@@ -16,6 +27,20 @@ impl AbilityScore {
 
     /// A sensible default value for an ability score, which is 10.
     pub const DEFAULT: AbilityScore = AbilityScore(10);
+
+    /// Creates a new `AbilityScore` with the given value.
+    ///
+    /// In debug mode, this will panic if the value is outside the valid range of 1 to 30.
+    ///
+    /// In release mode, it will clamp the value to the range of [`Self::MIN`] to [`Self::MAX`].
+    #[must_use]
+    pub const fn new(value: u8) -> Self {
+        debug_assert!(
+            !(value < Self::MIN.value() || value > Self::MAX.value()),
+            "Ability score must be between 1 and 30"
+        );
+        Self::new_clamped(value)
+    }
 
     /// Creates a new `AbilityScore` with the given value.
     ///
@@ -118,6 +143,18 @@ mod tests {
     fn try_new_valid() {
         let score = AbilityScore::try_new(15);
         assert_eq!(score, Ok(AbilityScore(15)));
+    }
+
+    #[test]
+    #[should_panic(expected = "Ability score must be between 1 and 30")]
+    fn new_panic() {
+        let _score = AbilityScore::new(0);
+    }
+
+    #[test]
+    fn new() {
+        let score = AbilityScore::new(15);
+        assert_eq!(score, AbilityScore(15));
     }
 
     #[test]

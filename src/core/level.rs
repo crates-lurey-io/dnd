@@ -1,6 +1,39 @@
 use crate::core::ProficiencyBonus;
 
 /// Level of a player character.
+///
+/// A level is a [`u8`] value in the range of `1..=20`.
+///
+/// # Examples
+///
+/// ```rust
+/// use dnd::core::Level;
+///
+/// let level = Level::new(5);
+/// assert_eq!(level.value(), 5);
+/// ```
+///
+/// # Conversion to a [`ProficiencyBonus`]
+///
+/// A `Level` can be converted to a `ProficiencyBonus` using the `proficiency_bonus()` method:
+///
+/// ```rust
+/// use dnd::core::{Level, ProficiencyBonus};
+///
+/// let level = Level::new(5);
+/// let bonus: ProficiencyBonus = level.proficiency_bonus();
+/// assert_eq!(bonus.value(), 3);
+/// ```
+///
+/// Or, using `From` trait:
+///
+/// ```rust
+/// use dnd::core::{Level, ProficiencyBonus};
+///
+/// let level = Level::new(5);
+/// let bonus = ProficiencyBonus::from(level);
+/// assert_eq!(bonus.value(), 3);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Level(u8);
@@ -11,6 +44,20 @@ impl Level {
 
     /// The maximum possible level.
     pub const MAX: Self = Self(20);
+
+    /// Creates a new `Level` with the given value.
+    ///
+    /// In debug mode, this will panic if the value is outside the valid range of 1 to 30.
+    ///
+    /// In release mode, it will clamp the value to the range of [`Self::MIN`] to [`Self::MAX`].
+    #[must_use]
+    pub const fn new(value: u8) -> Self {
+        debug_assert!(
+            !(value < Self::MIN.value() || value > Self::MAX.value()),
+            "Level must be between 1 and 20"
+        );
+        Self::new_clamped(value)
+    }
 
     /// Creates a new `Level` with the given value.
     ///
@@ -122,6 +169,18 @@ mod tests {
     fn try_new_valid() {
         let level = Level::try_new(10);
         assert_eq!(level, Ok(Level(10)));
+    }
+
+    #[test]
+    #[should_panic(expected = "Level must be between 1 and 20")]
+    fn new_panic() {
+        let _level = Level::new(0);
+    }
+
+    #[test]
+    fn new() {
+        let level = Level::new(5);
+        assert_eq!(level, Level(5));
     }
 
     #[test]

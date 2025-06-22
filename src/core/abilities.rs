@@ -3,36 +3,122 @@ use core::ops::{Index, IndexMut};
 use crate::core::{Ability, AbilityScore};
 
 /// The six ability scores of a creature.
+///
+/// # Examples
+///
+/// ```rust
+/// use dnd::core::{Abilities, AbilityScore};
+///
+/// let abilities = Abilities::new();
+/// assert_eq!(abilities.strength, AbilityScore::new(10));
+/// assert_eq!(abilities.dexterity, AbilityScore::new(10));
+/// ```
+///
+/// Or, to create a set with specific values for each ability:
+///
+/// ```rust
+/// use dnd::core::{Abilities, Ability, AbilityScore};
+///
+/// let abilities = Abilities {
+///   strength: AbilityScore::new(16),
+///   dexterity: AbilityScore::new(14),
+///   constitution: AbilityScore::new(15),
+///   intelligence: AbilityScore::new(13),
+///   wisdom: AbilityScore::new(12),
+///   charisma: AbilityScore::new(10),
+/// };
+/// ```
+///
+/// # Indexing
+///
+/// You can also dynamically access each ability score using the [`Ability`] enum:
+///
+/// ```rust
+/// use dnd::core::{Abilities, Ability, AbilityScore};
+///
+/// let mut abilities = Abilities::new();
+/// abilities[Ability::Strength] = AbilityScore::new(18);
+/// assert_eq!(abilities[Ability::Strength], AbilityScore::new(18));
+/// ```
+///
+/// # Iteration
+///
+/// You can iterate over all abilities and their scores using the `iter` method:
+///
+/// ```rust
+/// use dnd::core::{Abilities, Ability, AbilityScore};
+///
+/// let abilities = Abilities::new();
+/// for (ability, score) in abilities.iter() {
+///    println!("{:?}: {}", ability, score.value());
+/// }
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Abilities {
     /// Physical might.
+    ///
+    /// To read or write to this field with indexing, use [`Ability::Strength`].
     pub strength: AbilityScore,
 
     /// Agility, reflexes, and balance.
+    ///
+    /// To read or write to this field with indexing, use [`Ability::Dexterity`].
     pub dexterity: AbilityScore,
 
     /// Health and stamina.
+    ///
+    /// To read or write to this field with indexing, use [`Ability::Constitution`].
     pub constitution: AbilityScore,
 
     /// Reasoning and memory.
+    ///
+    /// To read or write to this field with indexing, use [`Ability::Intelligence`].
     pub intelligence: AbilityScore,
 
     /// Perceptiveness and mental fortitude.
+    ///
+    /// To read or write to this field with indexing, use [`Ability::Wisdom`].
     pub wisdom: AbilityScore,
 
     /// Confidence, poise, and charm.
+    ///
+    /// To read or write to this field with indexing, use [`Ability::Charisma`].
     pub charisma: AbilityScore,
 }
 
 impl Abilities {
     /// Creates a new `Abilities` instance with default ability scores (value of 10 for each).
+    ///
+    /// This is equivalent to calling `Abilities::with_uniform(AbilityScore::DEFAULT)`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use dnd::core::{Abilities, AbilityScore};
+    ///
+    /// let abilities = Abilities::new();
+    /// assert_eq!(abilities.strength, AbilityScore::new(10));
+    /// assert_eq!(abilities.dexterity, AbilityScore::new(10));
+    /// ```
     #[must_use]
     pub const fn new() -> Self {
         Self::with_uniform(AbilityScore::DEFAULT)
     }
 
     /// Creates a new `Abilities` instance using the same uniform value for all abilities.
+    ///
+    /// This is useful for quickly initializing abilities to the same score.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use dnd::core::{Abilities, AbilityScore};
+    ///
+    /// let abilities = Abilities::with_uniform(AbilityScore::new(12));
+    /// assert_eq!(abilities.strength, AbilityScore::new(12));
+    /// assert_eq!(abilities.dexterity, AbilityScore::new(12));
+    /// ```
     #[must_use]
     pub const fn with_uniform(value: AbilityScore) -> Self {
         Self {
@@ -46,6 +132,19 @@ impl Abilities {
     }
 
     /// Returns an iterator of each ability and it's cooresponding score.
+    ///
+    /// The abilities are returned in the order defined by the [`Ability`] enum.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use dnd::core::{Abilities, Ability, AbilityScore};
+    ///
+    /// let abilities = Abilities::new();
+    /// for (ability, score) in abilities.iter() {
+    ///   println!("{:?}: {}", ability, score.value());
+    /// }
+    /// ```
     pub fn iter(&self) -> impl Iterator<Item = (Ability, AbilityScore)> {
         Ability::all()
             .iter()

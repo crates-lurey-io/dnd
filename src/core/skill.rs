@@ -3,6 +3,20 @@ use crate::core::Ability;
 use core::{fmt::Display, str::FromStr};
 
 /// A category of things creatures try to do with an ability check.
+///
+/// Skills are tied to abilities and represent specific areas of expertise or talent.
+///
+/// [`Skill`] is enum-like, but is implemented as a private struct to allow more flexibility.
+///
+/// # Examples
+///
+/// ```rust
+/// use dnd::core::{Skill, Ability};
+///
+/// let acrobatics = Skill::ACROBATICS;
+/// assert_eq!(acrobatics.name(), "Acrobatics");
+/// assert_eq!(acrobatics.ability(), Ability::Dexterity);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(transparent))]
 pub struct Skill {

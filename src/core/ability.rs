@@ -4,6 +4,19 @@ use core::{fmt::Display, str::FromStr};
 use crate::core::Skill;
 
 /// Six abilities that measure physical and mental characteristics of creatures.
+///
+/// Each ability has a name, an abbreviation, and is associated with certain skills.
+///
+/// # Examples
+///
+/// ```rust
+/// use dnd::core::{Ability, Skill};
+///
+/// let strength = Ability::Strength;
+/// assert_eq!(strength.name(), "Strength");
+/// assert_eq!(strength.abbr(), "STR");
+/// assert_eq!(strength.skills(), &[Skill::ATHLETICS]);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Ability {
