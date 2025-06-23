@@ -36,6 +36,7 @@ use crate::core::ProficiencyBonus;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[repr(transparent)]
 pub struct Level(u8);
 
 impl Level {

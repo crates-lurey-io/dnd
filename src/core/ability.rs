@@ -1,6 +1,6 @@
-use core::{fmt::Display, str::FromStr};
-
 use crate::core::Skill;
+use core::{fmt::Display, str::FromStr};
+use enumflags2::bitflags;
 
 /// Six abilities that measure physical and mental characteristics of creatures.
 ///
@@ -14,10 +14,12 @@ use crate::core::Skill;
 /// let strength = Ability::Strength;
 /// assert_eq!(strength.name(), "Strength");
 /// assert_eq!(strength.abbr(), "STR");
-/// assert_eq!(strength.skills(), &[Skill::ATHLETICS]);
+/// assert_eq!(strength.skills(), &[Skill::Athletics]);
 /// ```
+#[bitflags]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[repr(u8)]
 pub enum Ability {
     /// Physical might.
     Strength,
@@ -113,28 +115,28 @@ impl Ability {
     #[must_use]
     pub const fn skills(&self) -> &'static [Skill] {
         match self {
-            Ability::Strength => &[Skill::ATHLETICS],
-            Ability::Dexterity => &[Skill::ACROBATICS, Skill::SLEIGHT_OF_HAND, Skill::STEALTH],
+            Ability::Strength => &[Skill::Athletics],
+            Ability::Dexterity => &[Skill::Acrobatics, Skill::SleightOfHand, Skill::Stealth],
             Ability::Constitution => &[],
             Ability::Intelligence => &[
-                Skill::ARCANA,
-                Skill::HISTORY,
-                Skill::INVESTIGATION,
-                Skill::NATURE,
-                Skill::RELIGION,
+                Skill::Arcana,
+                Skill::History,
+                Skill::Investigation,
+                Skill::Nature,
+                Skill::Religion,
             ],
             Ability::Wisdom => &[
-                Skill::ANIMAL_HANDLING,
-                Skill::INSIGHT,
-                Skill::MEDICINE,
-                Skill::PERCEPTION,
-                Skill::SURVIVAL,
+                Skill::AnimalHandling,
+                Skill::Insight,
+                Skill::Medicine,
+                Skill::Perception,
+                Skill::Survival,
             ],
             Ability::Charisma => &[
-                Skill::DECEPTION,
-                Skill::INTIMIDATION,
-                Skill::PERFORMANCE,
-                Skill::PERSUASION,
+                Skill::Deception,
+                Skill::Intimidation,
+                Skill::Performance,
+                Skill::Persuasion,
             ],
         }
     }
@@ -260,7 +262,7 @@ mod tests {
 
     #[cfg(feature = "serde")]
     #[test]
-    fn serde() {
+    fn serde_json() {
         use serde_json;
 
         let ability = Ability::Strength;
@@ -268,6 +270,19 @@ mod tests {
         assert_eq!(serialized, "\"Strength\"");
 
         let deserialized: Ability = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(deserialized, ability);
+    }
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn serde_postcard() {
+        use postcard;
+
+        let ability = Ability::Dexterity;
+        let serialized = postcard::to_vec::<_, 8>(&ability).unwrap();
+        assert_eq!(serialized.as_slice(), &[1]);
+
+        let deserialized: Ability = postcard::from_bytes(&serialized).unwrap();
         assert_eq!(deserialized, ability);
     }
 

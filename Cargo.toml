@@ -5,7 +5,7 @@ license = "MIT"
 
 description = "D&D 5e types and common mechanics"
 repository = "http://crates.lurey.io/dnd"
-version = "0.1.0"
+version = "0.2.0"
 
 keywords = ["dnd", "dungeons-and-dragons"]
 categories = ["games", "no-std"]
@@ -25,12 +25,14 @@ taplo-cli = { version = "0.10.0", bins = ["taplo"] }
 [features]
 std = ["serde?/std"]
 default = ["std"]
-serde = ["dep:serde"]
+serde = ["dep:serde", "enumflags2/serde"]
 
 [dependencies]
+enumflags2 = { version = "0.7.12", default-features = false }
 serde = { version = "1.0.219", default-features = false, features = [
   "derive",
 ], optional = true }
 
 [dev-dependencies]
+postcard = "1.1.1"
 serde_json = "1.0.140"

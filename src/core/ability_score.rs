@@ -16,6 +16,7 @@ use crate::core::AbilityModifier;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[repr(transparent)]
 pub struct AbilityScore(u8);
 
 impl AbilityScore {
