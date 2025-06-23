@@ -15,8 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Skill` is now an `enum` instead of a struct with constants.
 - Some types have a specific size representation.
-- Proficiency bonuses can now go up to `18` (to represent expertise)
-- 
 
 ## [0.1.0] - 2025-06-22
 

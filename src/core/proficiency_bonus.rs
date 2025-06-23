@@ -2,7 +2,7 @@ use crate::core::Level;
 
 /// Represents a proficiency bonus.
 ///
-/// A proficiency bonus is a [`u8`] value in the range of `2..=18`.
+/// A proficiency bonus is a [`u8`] value in the range of `2..=9`.
 ///
 /// # Examples
 ///
@@ -22,18 +22,18 @@ impl ProficiencyBonus {
     pub const MIN: Self = Self(2);
 
     /// The maximum possible proficiency bonus.
-    pub const MAX: Self = Self(18);
+    pub const MAX: Self = Self(9);
 
     /// Creates a new `ProficiencyBonus` with the given value.
     ///
-    /// In debug mode, this will panic if the value is outside the valid range of 2 to 18.
+    /// In debug mode, this will panic if the value is outside the valid range of 2 to 9.
     ///
     /// In release mode, it will clamp the value to the range of [`Self::MIN`] to [`Self::MAX`].
     #[must_use]
     pub const fn new(value: u8) -> Self {
         debug_assert!(
             !(value < Self::MIN.value() || value > Self::MAX.value()),
-            "Proficiency bonus must be between 2 and 18"
+            "Proficiency bonus must be between 2 and 9"
         );
         Self::new_clamped(value)
     }
@@ -56,12 +56,12 @@ impl ProficiencyBonus {
     ///
     /// # Errors
     ///
-    /// Returns an error if the value is outside the valid range of 2 to 18.
+    /// Returns an error if the value is outside the valid range of 2 to 9.
     pub fn try_new(value: u8) -> Result<Self, &'static str> {
         if value < Self::MIN.value() {
             Err("Proficiency bonus cannot be less than 2")
         } else if value > Self::MAX.value() {
-            Err("Proficiency bonus cannot be greater than 18")
+            Err("Proficiency bonus cannot be greater than 9")
         } else {
             Ok(Self(value))
         }
@@ -106,7 +106,7 @@ mod tests {
 
     #[test]
     fn new_clamped_max() {
-        let bonus = ProficiencyBonus::new_clamped(18);
+        let bonus = ProficiencyBonus::new_clamped(9);
         assert_eq!(bonus, ProficiencyBonus::MAX);
     }
 
@@ -125,7 +125,7 @@ mod tests {
     #[test]
     fn try_new_max() {
         let bonus = ProficiencyBonus::try_new(19);
-        assert_eq!(bonus, Err("Proficiency bonus cannot be greater than 18"));
+        assert_eq!(bonus, Err("Proficiency bonus cannot be greater than 9"));
     }
 
     #[test]
@@ -135,7 +135,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "Proficiency bonus must be between 2 and 18")]
+    #[should_panic(expected = "Proficiency bonus must be between 2 and 9")]
     fn new_panic() {
         let _bonus = ProficiencyBonus::new(1);
     }
